@@ -10,7 +10,7 @@ This is cli application which a user can run to book one on one meetings.
 2. Create a virtual environment:
     python -m venv .venv
 
-3. activate venv
+3. activate venv:
     source my_venv/bin/activate
 
 4. Install dependencies:
