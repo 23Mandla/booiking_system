@@ -4,7 +4,11 @@ venv/
 env/
 
 # Python cache and compiled files
+constance/
 __pycache__/
 
 # IDE-specific files
 .vscode/
+
+#api service account key
+serviceAccountKey.json
