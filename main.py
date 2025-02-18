@@ -4,14 +4,13 @@ from firebase_admin import credentials, firestore
 import requests
 from constance import const
 
-
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # sign up a user
 def sign_up(email, password):
-    
+
     try:
         user = {
         "email" : email,
