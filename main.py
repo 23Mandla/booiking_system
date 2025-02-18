@@ -4,6 +4,7 @@ from firebase_admin import credentials, firestore
 import requests
 from constance import const
 
+# initialise database
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
