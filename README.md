@@ -8,9 +8,11 @@ This is cli application which a user can run to book one on one meetings.
     'git clone https://github.com/23Mandla/booiking_system.git
 
 2. Create a virtual environment:
+
     python -m venv .venv
 
 3. activate venv:
+
     source my_venv/bin/activate
 
 4. Install dependencies:
