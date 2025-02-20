@@ -76,17 +76,23 @@ def store_user_details(name, email, role, expertise):
 @click.command()
 def main(sign, email, password):
    
-    if sign == "up":
-        sign_up(email, password)
-    else:
+    if sign == "in":
         id = sign_in(email, password)
+        action = input("Here is what you can do : ['register'] ? ")
         while True:
-            if input("Here is what you can do : ['register'] ? ") == "register":
+            
+            if action == "register":
                 store_user_details.id = id
-                store_user_details()
-
-            input("Here are other operetions you can perform ...")
-
+                try:
+                    store_user_details()
+                    print("User details stored successfully!")
+                except Exception as e:
+                    print(f"Error storing user details: {e}")
+                    continue
+                input("Would like to perform other action ?")
+    else:
+        sign_up(email, password)
+        
 if __name__ == "__main__":
     print("Welcome to booking metors!")
     main()
