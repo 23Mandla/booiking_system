@@ -1,18 +1,25 @@
 import click
-from click.testing import CliRunner
 import firebase_admin
 from firebase_admin import credentials, firestore, auth
 import requests
 from constance import const
 
 # initialise database
-cred = credentials.Certificate("serviceAccountKey.json")
+cred = credentials.Certificate(const.SERVICE_ACC_KEY)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # sign up a user
-def sign_up(email, password):
+def sign_up(email : str, password):
+    """
+    Sign in first time app users.
 
+    Args:
+        email (string): Email to use for authentication
+
+    Returns:
+        String: Message indicating whether the user was successfully authenticated
+    """
     try:
         user = {
         "email" : email,
@@ -103,7 +110,7 @@ def meeting(mentor_id, mentee_id, time, status):
 def main(sign, email, password):
     
     if sign == "in":
-        action = input("Here is what you can do : ['register'] if registered view mentor ? ")
+        action = click.prompt("Here is what you can do : ['register'] if registered view mentor ? ")
         
         userEmail = sign_in(email, password)
         id = get_firebase_user_id(userEmail)
