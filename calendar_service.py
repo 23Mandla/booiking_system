@@ -32,12 +32,13 @@ def get_calendar_service():
 def view_calendar_events():
     service = get_calendar_service()
     try:
-        now = datetime.now(timezone.utc) + "Z"
+        now = datetime.now(timezone.utc).isoformat()
         print("Getting the upcoming 10 events")
         event_result = (
             service.events()
             .list(
                 calendarId = "primary",
+                q = 'Mentor booking system',
                 timeMin = now,
                 maxResults = 10,
                 singleEvents = True,
@@ -45,19 +46,49 @@ def view_calendar_events():
             ).execute()
         )
         events = event_result.get("items", [])
+      
         if not events:
             print("No upcoming event found.")
             return
         
-        for event in events:
-            start = event["start"].get("dateTime", event["start"].get("date"))
-            print(start, event["summary"])
+        matching_events = [( event['id'], event['organizer']['email'], event["attendees"], event["start"], event['status']) for event in events]
+
+        for event_id, organiser, attendees, time, status in matching_events:
+            print(f" ID: {event_id}, Meeting: {organiser}, status: {status}, attendee : {attendees}, time : {time['dateTime']}")
+
+        return matching_events
+            
+
     except HttpError as error:
         print(f"An error occurred: {error}")
 
+def create_event():
+    service = get_calendar_service()
+    event = {
+        'summary' : 'Meeting mentor',
+        'description' : 'mentor/mentee meeting',
+        'color' : 6,
+        'start': {
+            'dateTime': '2025-02-24T09:00:00-07:00',
+            'timeZone': 'Africa/Johannesburg',
+        },
+        'end': {
+            'dateTime': '2025-02-24T17:00:00-07:00',
+            'timeZone': 'Africa/Johannesburg',
+        },
+        'attendees' : [
+            {'email': 'geekgeekadict@gmail.com'},
+            {'email': 'mandlambolekwa@gmail.com'},
+        ],
+        'reminders' : {
+            'useDefault' : False,
+            'overrides': [
+                {'method': 'email', 'minutes': 24 * 60},
+                {'method': 'popup', 'minutes': 10},
+            ],
+        },
+    }
 
-def main():
-    pass
+    event = service.events().insert(calendarId = "primary", body = event).execute()
+    print(f"Event created : {event.get('htmlLink')}")
 
-if __name__ == "__main__":
-    main()
