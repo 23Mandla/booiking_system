@@ -92,7 +92,6 @@ def meeting():
     # TODO  # get mentor / mentee from the 
     events_meeting = view_calendar_events()
 
-
     for event_id, organiser, attendees, time, status in events_meeting:
         print(f" ID: {event_id}, Meeting: {organiser}, status: {status}, attendee : {attendees}, time : {time['dateTime']}")
 
@@ -103,10 +102,13 @@ def meeting():
             "status": status
         }
 
-        db.collection("meetings").document(event_id).set(meeting_data)
-        click.echo(f"Meeting scheduled successfully")
+        meeting = db.collection("meetings").document(event_id)
+        meetingExist = meeting.get()
 
-    here
+        if not meetingExist:
+            db.collection("meetings").document(event_id).set(meeting_data)
+   
+    click.echo(db.collection("meetings").get())
 
 #arguments using click
 @click.option("--password", "-n", prompt = "Enter your password ", help = "Your name")
@@ -132,8 +134,8 @@ def main(sign, email, password):
 
                 try:
                     store_user_details(id, name, userEmail,  role, expertise)
-                    input("Would you like to view mentor ?")
                     click.echo("User details stored successfully!")
+                    input("Would you like to view mentor ?")
                 except Exception as e:
                     click.echo(f"Error storing user details: {e}")
             else:
