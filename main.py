@@ -93,7 +93,6 @@ def meeting():
     events_meeting = view_calendar_events()
 
     for event_id, organiser, attendees, time, status in events_meeting:
-        print(f" ID: {event_id}, Meeting: {organiser}, status: {status}, attendee : {attendees}, time : {time['dateTime']}")
 
         meeting_data = {
             "mentor_id": organiser,
@@ -102,13 +101,16 @@ def meeting():
             "status": status
         }
 
-        meeting = db.collection("meetings").document(event_id)
-        meetingExist = meeting.get()
+        meetings = db.collection("meetings").document(event_id)
+        meetingExist = meetings.get()
 
         if not meetingExist:
             db.collection("meetings").document(event_id).set(meeting_data)
    
-    click.echo(db.collection("meetings").get())
+    docs = db.collection("meetings").stream()
+
+    for doc in docs:
+        click.echo(f"{doc.id} => {doc.to_dict()}")
 
 #arguments using click
 @click.option("--password", "-n", prompt = "Enter your password ", help = "Your name")
@@ -145,4 +147,9 @@ def main(sign, email, password):
         
 if __name__ == "__main__":
     print("Welcome to booking metors!")
-    meeting()
+    while True:
+        ans = click.prompt("Continue")
+        if ans == "yes":
+            meeting()
+        else:
+            break

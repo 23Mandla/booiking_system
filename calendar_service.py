@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 import os.path
-
+import click 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -48,13 +48,10 @@ def view_calendar_events():
         events = event_result.get("items", [])
       
         if not events:
-            print("No upcoming event found.")
+            click.echo("No upcoming event found.")
             return
         
         matching_events = [( event['id'], event['organizer']['email'], event["attendees"], event["start"], event['status']) for event in events]
-
-        for event_id, organiser, attendees, time, status in matching_events:
-            print(f" ID: {event_id}, Meeting: {organiser}, status: {status}, attendee : {attendees}, time : {time['dateTime']}")
 
         return matching_events
             
