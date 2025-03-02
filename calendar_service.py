@@ -31,6 +31,7 @@ def get_calendar_service():
 
 def view_calendar_events():
     service = get_calendar_service()
+   
     try:
         now = datetime.now(timezone.utc).isoformat()
         print("Getting the upcoming 10 events")
@@ -38,7 +39,7 @@ def view_calendar_events():
             service.events()
             .list(
                 calendarId = "primary",
-                q = 'Mentor booking system',
+                # q = 'Mentor booking system',
                 timeMin = now,
                 maxResults = 10,
                 singleEvents = True,
@@ -49,33 +50,35 @@ def view_calendar_events():
       
         if not events:
             click.echo("No upcoming event found.")
-            return
         
-        matching_events = [( event['id'], event['organizer']['email'], event["attendees"], event["start"], event['status']) for event in events]
+        matching_events = [( event['id'], event['organizer']['email'], event["attendees"], event["start"], event['status']) for event in events if event.get("summary") == 'mentor meeting - functions']
 
+        for event in events:
+            start = event["start"].get("dateTime", event["start"].get("date"))
+            print(start, event["summary"])
+
+        print(matching_events)
         return matching_events
-            
-
+    
     except HttpError as error:
         print(f"An error occurred: {error}")
 
 def create_event():
     service = get_calendar_service()
     event = {
-        'summary' : 'Meeting mentor',
-        'description' : 'mentor/mentee meeting',
+        'summary' : 'mentor meeting - functions',
+        'description' : 'A breif tutorial on function and their use case',
         'color' : 6,
         'start': {
-            'dateTime': '2025-02-24T09:00:00-07:00',
+            'dateTime': '2025-03-04T09:00:00-07:00',
             'timeZone': 'Africa/Johannesburg',
         },
         'end': {
-            'dateTime': '2025-02-24T17:00:00-07:00',
+            'dateTime': '2025-03-04T17:00:00-07:00',
             'timeZone': 'Africa/Johannesburg',
         },
         'attendees' : [
             {'email': 'geekgeekadict@gmail.com'},
-            {'email': 'mandlambolekwa@gmail.com'},
         ],
         'reminders' : {
             'useDefault' : False,
@@ -89,3 +92,5 @@ def create_event():
     event = service.events().insert(calendarId = "primary", body = event).execute()
     print(f"Event created : {event.get('htmlLink')}")
 
+if __name__ == "__main__":
+    create_event()

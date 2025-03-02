@@ -112,10 +112,45 @@ def meeting():
     for doc in docs:
         click.echo(f"{doc.id} => {doc.to_dict()}")
 
+# create events
+@click.add_argument("topic", prompt = "Enter meeting topic ", help = "meeting topic")
+@click.add_argument("descripton", prompt = "Briefly decribe the nature of the meeting ", help = "description of the meeting")
+@click.add_argument("startTime", prompt = "from what time ", help = "Start meeting @")
+@click.add_argument("endTime", prompt = "To what time ", help = "End meeting @")
+@click.add_argument("attendees", prompt = "Add email address of the attendee  ", help = "Add meeting attendees email addresses")
+@click.command()
+def create_event_():
+    # event schema
+    """
+     event = {
+        'summary' : 'mentor meeting - functions',
+        'description' : 'A breif tutorial on function and their use case',
+        'color' : 6,
+        'start': {
+            'dateTime': '2025-03-04T09:00:00-07:00',
+            'timeZone': 'Africa/Johannesburg',
+        },
+        'end': {
+            'dateTime': '2025-03-04T17:00:00-07:00',
+            'timeZone': 'Africa/Johannesburg',
+        },
+        'attendees' : [
+            {'email': 'geekgeekadict@gmail.com'},
+        ],
+        'reminders' : {
+            'useDefault' : False,
+            'overrides': [
+                {'method': 'email', 'minutes': 24 * 60},
+                {'method': 'popup', 'minutes': 10},
+            ],
+        },
+    }
+    """
+
 #arguments using click
-@click.option("--password", "-n", prompt = "Enter your password ", help = "Your name")
-@click.option("--email", "-n", prompt = "Enter your email ", help = "Your name")
-@click.option("--sign", "-n", prompt = "Would you like to sign in or sign up ", help = "Your name")
+@click.option("--password", "-p", prompt = "Enter your password ", help = "Your name")
+@click.option("--email", "-e", prompt = "Enter your email ", help = "Your name")
+@click.option("--sign", "-s", prompt = "Would you like to sign in or sign up ", help = "Your name")
 @click.command()
 
 def main(sign, email, password):
@@ -150,6 +185,6 @@ if __name__ == "__main__":
     while True:
         ans = click.prompt("Continue")
         if ans == "yes":
-            meeting()
+            main()
         else:
             break
