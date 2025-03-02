@@ -113,27 +113,19 @@ def meeting():
     for doc in docs:
         click.echo(f"{doc.id} => {doc.to_dict()}")
 
-# create events
-@click.add_argument("topic", prompt = "Enter meeting topic ", help = "meeting topic")
-@click.add_argument("descripton", prompt = "Briefly decribe the nature of the meeting ", help = "description of the meeting")
-@click.add_argument("startDate", prompt = "Enter start date (YYYY-MM-DD): ", help = "Date to which the meeting starts")
-@click.add_argument("startTime", prompt = "from what time (HH:MM, 24-hour format): ", help = "Start meeting @")
-@click.add_argument("endDate", prompt = "Enter end date (YYYY-MM-DD): ", help = "Date to which the meeting ends")
-@click.add_argument("endTime", prompt = "To what time (HH:MM, 24-hour format): ", help = "End meeting @")
-@click.add_argument("attendees", prompt = "Add email address of the attendee  ", help = "Add meeting attendees email addresses")
-@click.command()
-
+# create event
 def create_event_(topic, description, startDate, startTime, endDate, endTime, attendees):
 
-    f_startTime = startTime.split(":")
-    f_date = startDate.split("-")
-    start_date = datetime.datetime(f_date[0], f_date[1], f_date[2], f_startTime[0], f_startTime[1])
+    f_startTime = [int(time_start) for time_start in startTime.split(":")]
+    f_date = [int(date_start) for date_start in startDate.split("-")]
+    start_date = datetime(f_date[0], f_date[1], f_date[2], f_startTime[0], f_startTime[1]).isoformat()
 
-    f_endTime = endTime.split(":")
-    f_end_date = endDate.split("-")
-    end_date = datetime.datetime(f_end_date[0], f_end_date[1], f_end_date[2], f_endTime[0], f_endTime[1])
+    f_endTime = [int(time_ends) for time_ends in endTime.split(":")]
+    f_end_date = [int(date_ends) for date_ends in endDate.split("-")]
+    end_date = datetime(f_end_date[0], f_end_date[1], f_end_date[2], f_endTime[0], f_endTime[1]).isoformat()
 
     try:
+        #TODO Serialize json object
         event_ceation = create_event(topic, description, start_date, end_date, attendees)
         print(event_ceation)
     except Exception as error:
@@ -177,6 +169,15 @@ if __name__ == "__main__":
     while True:
         ans = click.prompt("Continue")
         if ans == "yes":
-            main()
+            # create events
+            topic = click.prompt("Enter meeting topic ")
+            description = click.prompt("Briefly decribe the nature of the meeting ")
+            startDate = click.prompt("Enter start date (YYYY-MM-DD): ")
+            startTime = click.prompt("from what time (HH:MM, 24-hour format): ")
+            endDate = click.prompt("Enter end date (YYYY-MM-DD): ")
+            endTime = click.prompt("To what time (HH:MM, 24-hour format): ")
+            attendees = click.prompt("Add email address of the attendee  ")
+
+            create_event_(topic, description, startDate, startTime, endDate, endTime, attendees)
         else:
             break
