@@ -4,6 +4,7 @@ from firebase_admin import credentials, firestore, auth
 import requests
 from constance import const
 from calendar_service import *
+from datetime import datetime
 
 # initialise database
 cred = credentials.Certificate(const.SERVICE_ACC_KEY)
@@ -115,37 +116,28 @@ def meeting():
 # create events
 @click.add_argument("topic", prompt = "Enter meeting topic ", help = "meeting topic")
 @click.add_argument("descripton", prompt = "Briefly decribe the nature of the meeting ", help = "description of the meeting")
-@click.add_argument("startTime", prompt = "from what time ", help = "Start meeting @")
-@click.add_argument("endTime", prompt = "To what time ", help = "End meeting @")
+@click.add_argument("startDate", prompt = "Enter start date (YYYY-MM-DD): ", help = "Date to which the meeting starts")
+@click.add_argument("startTime", prompt = "from what time (HH:MM, 24-hour format): ", help = "Start meeting @")
+@click.add_argument("endDate", prompt = "Enter end date (YYYY-MM-DD): ", help = "Date to which the meeting ends")
+@click.add_argument("endTime", prompt = "To what time (HH:MM, 24-hour format): ", help = "End meeting @")
 @click.add_argument("attendees", prompt = "Add email address of the attendee  ", help = "Add meeting attendees email addresses")
 @click.command()
-def create_event_():
-    # event schema
-    """
-     event = {
-        'summary' : 'mentor meeting - functions',
-        'description' : 'A breif tutorial on function and their use case',
-        'color' : 6,
-        'start': {
-            'dateTime': '2025-03-04T09:00:00-07:00',
-            'timeZone': 'Africa/Johannesburg',
-        },
-        'end': {
-            'dateTime': '2025-03-04T17:00:00-07:00',
-            'timeZone': 'Africa/Johannesburg',
-        },
-        'attendees' : [
-            {'email': 'geekgeekadict@gmail.com'},
-        ],
-        'reminders' : {
-            'useDefault' : False,
-            'overrides': [
-                {'method': 'email', 'minutes': 24 * 60},
-                {'method': 'popup', 'minutes': 10},
-            ],
-        },
-    }
-    """
+
+def create_event_(topic, description, startDate, startTime, endDate, endTime, attendees):
+
+    f_startTime = startTime.split(":")
+    f_date = startDate.split("-")
+    start_date = datetime.datetime(f_date[0], f_date[1], f_date[2], f_startTime[0], f_startTime[1])
+
+    f_endTime = endTime.split(":")
+    f_end_date = endDate.split("-")
+    end_date = datetime.datetime(f_end_date[0], f_end_date[1], f_end_date[2], f_endTime[0], f_endTime[1])
+
+    try:
+        event_ceation = create_event(topic, description, start_date, end_date, attendees)
+        print(event_ceation)
+    except Exception as error:
+        print(f"An error occured : {error}")
 
 #arguments using click
 @click.option("--password", "-p", prompt = "Enter your password ", help = "Your name")

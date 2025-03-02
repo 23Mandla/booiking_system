@@ -63,22 +63,22 @@ def view_calendar_events():
     except HttpError as error:
         print(f"An error occurred: {error}")
 
-def create_event():
+def create_event(topic, description, start_date, end_date, attendees):
     service = get_calendar_service()
     event = {
-        'summary' : 'mentor meeting - functions',
-        'description' : 'A breif tutorial on function and their use case',
+        'summary' : f'mentor meeting - {topic}',
+        'description' : description,
         'color' : 6,
         'start': {
-            'dateTime': '2025-03-04T09:00:00-07:00',
+            'dateTime': start_date,
             'timeZone': 'Africa/Johannesburg',
         },
         'end': {
-            'dateTime': '2025-03-04T17:00:00-07:00',
+            'dateTime': end_date,
             'timeZone': 'Africa/Johannesburg',
         },
         'attendees' : [
-            {'email': 'geekgeekadict@gmail.com'},
+            {'email': {attendees}},
         ],
         'reminders' : {
             'useDefault' : False,
@@ -86,11 +86,11 @@ def create_event():
                 {'method': 'email', 'minutes': 24 * 60},
                 {'method': 'popup', 'minutes': 10},
             ],
-        },
+        } ,
     }
 
     event = service.events().insert(calendarId = "primary", body = event).execute()
-    print(f"Event created : {event.get('htmlLink')}")
+    return f"Event created : {event.get('htmlLink')}"
 
 if __name__ == "__main__":
     create_event()
